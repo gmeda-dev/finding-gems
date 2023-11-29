@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Finding Gems ;)</title>
+<style>
+    body {
+        background-color: lime;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 90vh;
+    }
+    form {
+        display: inline-block;
+    }
+    .container {
+        text-align: center;
+    }
+    .square {
+        border: 10px solid red;
+        padding: 5px;
+        max-width: 200px;
+        text-align: center;
+    }
+    .title {
+        color: yellow;
+    }
+</style>
+</head>
+
+<body>
+    <div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <div class="container">
+            <h3 class="title">FINDING GEMS</h3>
+            {% if request.session.difficulty %}
+                <div class="square">
+                    SCORE={{request.session.score}}
+                    <a href="{% url 'index' %}?reset=1">RESET</a>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{gem_form.as_table}}
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+                <div class="square" style="overflow-y: scroll; height:40vh;">
+                    {% for food_truck in food_trucks %}
+                        <p>{{food_truck.applicant}}</p>
+                    {% empty %}
+                        <p>NO GEMS FOUND</p>
+                    {% endfor %}
+                </div>
+            {%else%}
+                <div class="square">
+                    <form method="POST" action="{% url 'set_difficulty' %}">
+                        {% csrf_token %}
+                        {{difficulty_form.as_table}}
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>
